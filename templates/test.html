@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SocketIO Test</title>
+</head>
+<body>
+  <h1>SocketIO Test</h1>
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+  <script>
+    const socket = io(); // 默认连到当前域名:端口 -> 127.0.0.1:5000
+    socket.on('connect', () => {
+      console.log("Connected to server, sid:", socket.id);
+    });
+    socket.on('new_image', (data) => {
+      console.log("Received new_image:", data);
+      alert("Got new_image event with data: " + JSON.stringify(data));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>Receiver</title>
+<style>
+    body{
+        background: url('{{ url_for("static", filename="image/bg.jpg") }}') no-repeat ;
+        background-size: 2400px;
+        background-attachment: scroll;
+    }
+    h1{text-align: center;
+        margin-top: 0;
+    }
+    #title1{
+        font-weight: 800;
+        font-size: 25px;
+        color: darkcyan;
+        padding-top: 15px;
+        text-align: center;
+    }
+    #container_traditional img {
+        position: absolute;
+        top: 270px;
+        left: 1180px;
+        width: 320px;
+        height: 220px;
+    }
+    #container_semantic img {
+        position: absolute;
+        top: 660px;
+        left: 1180px;
+        width: 320px;
+        height: 220px;
+    }
+</style>
+
+</head>
+<body>
+    <div>
+{#        <br><img src="{{ url_for('static', filename='image/北邮 logo 蓝.png') }}" width=7% height=14% style="position: absolute;left: 50px">#}
+        <img src="{{url_for('static',filename='image/国家电网.png') }}" style="position: absolute;left: 20px;top:100px;width: 180px;height:120px;">
+{#        <br>#}
+{#        <br>#}
+{#        <br>#}
+{#        <br>#}
+{#        <br>#}
+{#        <br>#}
+{#    <p style="position: absolute;left: 220px;top:30px;font-size: 40px;color:#0033FF">下 一 代 通 信 系 统 理 论 与 技 术 研 究 室</p>#}
+        <div style="text-align: center">
+            <b style="font-size: 50px" >
+                智能电网中基于语义通信和北斗卫星的电信采集技术平台——接收端
+            </b>
+        </div>
+    </div>
+
+    <div id="title1">
+{#        <br>#}
+{#        <br>#}
+{#        <br>#}
+        <img src="{{ url_for('static', filename='Setting/卫星接收端改.png') }}" width=1890px height=930px style="float: left">
+    </div>
+    <div id="bandwidth-traditional"
+    style="position: absolute; left: 30px; top: 500px; color: red; font-weight: bold; font-size: 32px;">
+    带宽
+    </div>
+    <div id="bandwidth-sematic"
+    style="position: absolute; left: 30px; top: 890px; color: red; font-weight: bold; font-size: 32px;">
+    带宽
+    </div>
+        </div>
+        <div id="compression-traditional"
+    style="position: absolute; left: 440px; top: 110px; color: red; font-weight: bold; font-size: 32px;">
+    压缩量
+    </div>
+    <div id="compression-semantic"
+    style="position: absolute; left: 440px; top: 930px; color: red; font-weight: bold; font-size: 32px;">
+    压缩量
+    </div>
+    <div id="throughput-traditional"
+    style="position: absolute; left: 740px; top: 110px; color: red; font-weight: bold; font-size: 32px;">
+    吞吐量
+    </div>
+
+        <div id="throughput-semantic"
+    style="position: absolute; left: 740px; top: 930px; color: red; font-weight: bold; font-size: 32px;">
+    吞吐量
+    </div>
+    </div>
+<!--    <div id="psnr-traditional"-->
+    <div id="lpips-traditional"
+    style="position: absolute; left: 1270px; top: 490px; color: red; font-weight: bold; font-size: 32px;">
+<!--    PSNR-->
+        LPIPS
+    </div>
+<!--    <div id="psnr-sematic"-->
+    <div id="lpips-sematic"
+    style="position: absolute; left: 1270px; top: 890px; color: red; font-weight: bold; font-size: 32px;">
+<!--    PSNR-->
+        LPIPS
+    </div>
+    <div id="container_traditional"></div>
+    <div id="container_semantic"></div>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        const container_traditional = document.getElementById("container_traditional");
+        const container_semantic = document.getElementById("container_semantic");
+
+        socket.on("message", (data) => {
+            console.log("new_image event triggered:", data);
+            container_traditional.innerHTML = "";
+            container_semantic.innerHTML = "";
+
+            const traditionalImg = document.createElement("img");
+            traditionalImg.src = data.traditional_image_url;
+            container_traditional.appendChild(traditionalImg);
+
+            const semanticImg = document.createElement("img");
+            semanticImg.src = data.semantic_image_url;
+            container_semantic.appendChild(semanticImg);
+            //
+            const traditionalBandwidth = data.traditional_image_size;
+            const semanticBandwidth = data.semantic_feature_size;
+            const traditionalCompression =data.traditional_compression_ratio;
+            const semanticCompression =data.semantic_compression_ratio;
+            document.getElementById("bandwidth-traditional").innerText = `带宽: ${traditionalBandwidth}KBps`;
+            document.getElementById("bandwidth-sematic").innerText = `带宽: ${semanticBandwidth}KBps`;
+            document.getElementById("compression-traditional").innerText=`压缩比: ${traditionalCompression}%`;
+            document.getElementById("compression-semantic").innerText=`压缩比: ${semanticCompression}%`;
+            const traitionalThroughout=data.traditional_throughout;
+            const semanticThroughout=data.semantic_throughout;
+            document.getElementById("throughput-traditional").innerText=`吞吐量: ${traitionalThroughout}`;
+            document.getElementById("throughput-semantic").innerText=`吞吐量: ${semanticThroughout}`;
+            //
+            // const traditionalPSNR = data.traditional_image_psnr;
+            // const semanticPSNR = data.semantic_image_psnr;
+            const traditionalLPIPS = data.traditional_image_lpips;
+            const semanticLPIPS = data.semantic_image_lpips;
+            // document.getElementById("psnr-traditional").innerText = `PSNR: ${traditionalPSNR}`;
+            // document.getElementById("psnr-sematic").innerText = `PSNR: ${semanticPSNR}`;
+            document.getElementById("lpips-traditional").innerText = `LPIPS: ${traditionalLPIPS}`;
+            document.getElementById("lpips-sematic").innerText = `LPIPS: ${semanticLPIPS}`;
+        })
+
+
+
+    </script>
+</body>
+</html>

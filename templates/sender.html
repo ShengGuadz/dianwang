@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>Transmitter</title>
+<style>
+    body{
+        background: url('{{ url_for("static", filename="image/bg.jpg") }}') no-repeat ;
+        background-size: cover;
+        background-attachment: local;
+    }
+    h1{text-align: center;
+        margin-top: 0;
+    }
+    #title1{
+        font-weight: 800;
+        font-size: 25px;
+        color: darkcyan;
+        padding-top: 15px;
+        text-align: center;
+    }
+    #container_traditional img {
+        position: absolute;
+        top: 240px;
+        left: 230px;
+        width: 310px;
+        height: 210px;
+    }
+    #container_semantic img {
+        position: absolute;
+        top: 680px;
+        left: 230px;
+        width: 310px;
+        height: 210px;
+    }
+
+</style>
+
+</head>
+<body>
+    <div>
+<!--        <br>-->
+<!--        <img src="{{ url_for('static', filename='image/北邮 logo 蓝.png') }}" width=7% height=14% style="position: absolute;left: 50px">-->
+<!--        <img src="{{ url_for('static', filename='image/国家电网.png') }}" width=9% height=10% style="position: absolute;left: 10px">-->
+        <img src="{{ url_for('static', filename='image/国家电网.png') }}"
+     style="position: absolute; left: 20px; top: 100px; width: 180px; height: 120px;">
+
+<!--        <br>-->
+<!--        <br><br>-->
+<!--        <br>-->
+<!--        <br>-->
+<!--        <br>-->
+<!--        <br>-->
+<!--        <p style="position: absolute;left: 220px;top:30px;font-size: 40px;color: #0033FF;">下 一 代 通 信 系 统 理 论 与 技 术 研 究 室</p>-->
+        <div style="text-align: center">
+            <b style="font-size: 50px" >
+<!--            图像语义通信平台——发送端-->
+                智能电网中基于语义通信和北斗卫星的电信采集技术平台——发送端
+            </b>
+        </div>
+    </div>
+    <div id="title1">
+
+<!--        <br>-->
+<!--        <br>-->
+
+        <img src="{{ url_for('static', filename='Setting/卫星发送端改.png') }}" width=100% height=100%>
+
+    </div>
+    <div id="bandwidth-traditional"
+    style="position: absolute; left: 1630px; top: 410px; color: red; font-weight: bold; font-size: 32px;">
+    带宽
+    </div>
+    <div id="bandwidth-sematic"
+    style="position: absolute; left: 1630px; top: 900px; color: red; font-weight: bold; font-size: 32px;">
+    带宽
+    </div>
+    <div id="container_traditional"></div>
+    <div id="container_semantic"></div>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script>
+        const socket = io(); // 建立SocketIO连接
+        const container_traditional = document.getElementById("container_traditional");
+        const container_semantic = document.getElementById("container_semantic");
+        // 🔥 监听后端推送的消息
+        socket.on("message", (data) => {
+            console.log("new_image event triggered:", data);
+            // 清空并更新图像显示
+            container_traditional.innerHTML = "";
+            container_semantic.innerHTML = "";
+            // 显示原始图像
+
+            const originalImg = document.createElement("img");
+            originalImg.src = data.original_image_url;
+            container_traditional.appendChild(originalImg);
+            // 显示语义图像（实际上是同一张图）
+
+            const semanticImg = document.createElement("img");
+            semanticImg.src = data.semantic_image_url;
+            container_semantic.appendChild(semanticImg);
+            // 更新带宽显示
+
+            const traditionalBandwidth = data.original_image_size;
+            const semanticBandwidth = data.semantic_feature_size;
+            document.getElementById("bandwidth-traditional").innerText = `带宽:${traditionalBandwidth}KBps`;
+            document.getElementById("bandwidth-sematic").innerText = `带宽:${semanticBandwidth}KBps`;
+        })
+
+
+
+    </script>
+</body>
+</html>
