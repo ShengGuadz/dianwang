@@ -5,7 +5,9 @@
 主文件介绍
 ---
 sender.py和receiver.py是发送端和接收端的模型配置文件
+
 app.py和app2.py是发送端和接收端的后端启动文件
+
 templates\sender.html和templates\receiver.html是发送端和接收端的前端展示页面
 
 笔记
